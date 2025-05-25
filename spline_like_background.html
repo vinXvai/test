@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>3D Background</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background: radial-gradient(circle at center, #111, #000);
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
+  <script>
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    let renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    let geometry = new THREE.IcosahedronGeometry(1.5, 3);
+    let material = new THREE.MeshStandardMaterial({ color: 0xff00ff, roughness: 0.4, metalness: 0.9 });
+    let mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    let light = new THREE.PointLight(0xffffff, 1);
+    light.position.set(10, 10, 10);
+    scene.add(light);
+
+    camera.position.z = 5;
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    document.addEventListener('mousemove', (event) => {
+      const x = (event.clientX / window.innerWidth) * 2 - 1;
+      const y = -(event.clientY / window.innerHeight) * 2 + 1;
+      mesh.rotation.x = y * 0.5;
+      mesh.rotation.y = x * 0.5;
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      mesh.rotation.z += 0.002;
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>
